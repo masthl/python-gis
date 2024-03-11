@@ -1,0 +1,36 @@
+import arcgis
+import arcpy
+from arcpy import env
+arcpy.env.overwriteOutput = True
+from arcgis.gis import GIS
+
+###Variables
+AGOL_Login = GIS(None, "PortalLogin", "PortalPassoword")
+itemToDownload = AGOL_Login.content.get("FeatureItemID")
+exportLoc = r"path_to_export_file"
+itemExportName_XL = "RMapFieldData"
+itemExportName_SHP = "RMap"
+
+###EXCEL
+###Export the ArcGIS Online Item
+itemToDownload.export(itemExportName_XL, "Excel", None, True)
+
+###Search for and Get the Newly Exported Item
+searchForExportedItem = AGOL_Login.content.search(itemExportName_XL)
+exportedItemID = searchForExportedItem[0].id
+getTheExportedItems = AGOL_Login.content.get(exportedItemID)
+
+###Download the Newly Exported Item
+getTheExportedItems.download(exportLoc, "{}.xlsx".format(itemExportName_XL))
+
+###SHAPEFILE
+###Export the ArcGIS Online Item
+itemToDownload.export(itemExportName_SHP, "Shapefile", None, True)
+
+###Search for and Get the Newly Exported Item
+searchForExportedItem = AGOL_Login.content.search(itemExportName_SHP)
+exportedItemID = searchForExportedItem[0].id
+getTheExportedItems = AGOL_Login.content.get(exportedItemID)
+
+###Download the Newly Exported Item
+getTheExportedItems.download(exportLoc, "{}.shp".format(itemExportName_SHP))
